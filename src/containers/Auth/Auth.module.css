@@ -1,0 +1,23 @@
+.Auth {
+  margin: 0 auto;
+  width: 80%;
+  text-align: center;
+  border: 4px solid #402d22;
+  padding: 25px 50px;
+  box-sizing: border-box;
+  background-color: #f7f1ec;
+}
+
+.Auth form {
+  border-bottom: 1px solid #ccc;
+}
+
+.Auth > button {
+  font-size: 0.85rem;
+}
+
+@media (min-width: 600px) {
+  .Auth {
+    width: 500px;
+  }
+}
