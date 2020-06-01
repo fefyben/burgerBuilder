@@ -44,6 +44,7 @@ class App extends Component {
       routes = (
         <Switch>
           <Route path="/checkout" component={ asyncCheckout } />
+          <Route path="/about" component={asyncAboutUs} />
           <Route path="/orders" component={ asyncOrders } />
           <Route path="/logout" component={ Logout } />
           <Route path="/auth" component={ asyncAuth } />

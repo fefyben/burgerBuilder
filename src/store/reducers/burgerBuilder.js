@@ -47,9 +47,9 @@ const setIngredients = (state, action) => {
       cheese: action.ingredients.cheese,
       meat: action.ingredients.meat
     },
-    // totalPrice: 6.5,
-    // ingError: false,
-    // building: false
+    totalPrice: 5,
+    ingError: false,
+    building: false
   });
 };
 
