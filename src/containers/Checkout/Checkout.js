@@ -1,33 +1,27 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import ContactData from './ContactData/ContactData';
 
-class Checkout extends Component {
-  render() {
-    let summary = <Redirect to="/" />;
-    if (this.props.ings) {
-      const purchasedRedirect = this.props.purchased ? <Redirect to="/" /> : null;
+const Checkout = () => {
+  const ings = useSelector(state => state.burgerBuilder.ingredients);
+  const purchased = useSelector(state => state.order.purchased);
 
-      summary = (
-        <Fragment>
-          { purchasedRedirect }
-          <CheckoutSummary ingredients={ this.props.ings } />
-          <ContactData />
-        </Fragment>
-      );
-    }
-    return summary;
-  }
-}
+  let summary = <Redirect to="/" />;
+  if (ings) {
+    const purchasedRedirect = purchased ? <Redirect to="/" /> : null;
 
-const mapStateToProps = state => {
-  return {
-    ings: state.burgerBuilder.ingredients,
-    purchased: state.order.purchased
+    summary = (
+      <Fragment>
+        { purchasedRedirect }
+        <CheckoutSummary ingredients={ ings } />
+        <ContactData />
+      </Fragment>
+    );
   }
+  return summary;
 };
 
-export default connect(mapStateToProps)(Checkout);
+export default Checkout;

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Order from '../../components/Order/Order';
 import axios from '../../axios-orders';
@@ -8,49 +8,34 @@ import * as actions from '../../store/actions/index';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import ErrorMessage from '../../components/UI/ErrorMessage/ErrorMessage';
 
-class Orders extends Component {
-  componentDidMount() {
-    this.props.onFetchOrders(this.props.token, this.props.userId);
+const Orders = props => {
+  const orders = useSelector(state => state.order.orders);
+  const error = useSelector(state => state.order.error);
+  const token = useSelector(state => state.auth.token);
+  const userId = useSelector(state => state.auth.user);
+
+  const dispatch = useDispatch();
+  const onFetchOrders = useCallback((token, userId) => dispatch(actions.fetchOrders(token, userId)), [dispatch]);
+  const onDeleteOrder = orderId => dispatch(actions.deleteOrder(orderId));
+
+  useEffect(() => {
+    onFetchOrders(token, userId);
+  }, [onFetchOrders, token, userId]);
+
+  let ordersArr = <Spinner />;
+  if (!error) {
+    ordersArr = orders.map(order => (
+      <Order
+        key={ order.id }
+        ingredients={ order.ingredients }
+        deleteOrder={ () => onDeleteOrder(order.id) }
+        price={ +order.price } />
+    ));
+  } else {
+    ordersArr = <ErrorMessage message={ error.message } />;
   }
 
-  goBackHandler = () => {
-    this.props.history.replace('/');
-  }
-
-  render() {
-    let orders = <Spinner />;
-    if (!this.props.error) {
-      orders = this.props.orders.map(order => (
-        <Order
-          key={ order.id }
-          ingredients={ order.ingredients }
-          deleteOrder={ () => this.props.onDeleteOrder(order.id) }
-          price={ +order.price } />
-      ));
-    } else {
-      orders = <ErrorMessage
-        message={ this.props.error.message } />;
-    }
-
-    return orders;
-  }
-}
-
-const mapStateToProps = state => {
-  return {
-    orders: state.order.orders,
-    loading: state.order.loading,
-    error: state.order.error,
-    token: state.auth.token,
-    userId: state.auth.user
-  };
+  return ordersArr;
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onFetchOrders: (token, userId) => dispatch(actions.fetchOrders(token, userId)),
-    onDeleteOrder: orderId => dispatch(actions.deleteOrder(orderId))
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Orders, axios));
+export default withErrorHandler(Orders, axios);
